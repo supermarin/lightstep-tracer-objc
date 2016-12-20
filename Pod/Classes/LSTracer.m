@@ -33,7 +33,6 @@ const NSInteger LSRequestTooLargeError = 2;
 @end
 
 
-
 #pragma mark - Tracer implementation
 
 @implementation LSTracer
@@ -270,12 +269,6 @@ static NSString* kBasicTracerBaggagePrefix = @"ot-baggage-";
 - (void) setMaxPayloadJSONLength:(NSUInteger)payloadLength {
     @synchronized(self) {
         m_maxPayloadJSONLength = payloadLength;
-    }
-}
-
-- (BOOL) enabled {
-    @synchronized(self) {
-        return m_enabled;
     }
 }
 
