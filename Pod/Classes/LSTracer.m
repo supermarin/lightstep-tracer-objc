@@ -249,6 +249,36 @@ static NSString* kBasicTracerBaggagePrefix = @"ot-baggage-";
     }
 }
 
+- (NSUInteger) maxSpanRecords {
+    @synchronized(self) {
+        return m_maxSpanRecords;
+    }
+}
+
+- (void) setMaxSpanRecords:(NSUInteger)capacity {
+    @synchronized(self) {
+        m_maxSpanRecords = capacity;
+    }
+}
+
+- (NSUInteger) maxPayloadJSONLength {
+    @synchronized(self) {
+        return m_maxPayloadJSONLength;
+    }
+}
+
+- (void) setMaxPayloadJSONLength:(NSUInteger)payloadLength {
+    @synchronized(self) {
+        m_maxPayloadJSONLength = payloadLength;
+    }
+}
+
+- (BOOL) enabled {
+    @synchronized(self) {
+        return m_enabled;
+    }
+}
+
 - (void) _appendSpanJSON:(NSDictionary*)spanJSON {
     @synchronized(self) {
         if (!self.enabled) {
