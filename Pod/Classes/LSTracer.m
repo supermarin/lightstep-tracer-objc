@@ -8,7 +8,7 @@
 #import "LSUtil.h"
 #import "LSVersion.h"
 
-static const NSString *LSDefaultBaseURLString = @"https://collector.lightstep.com:443/api/v0/reports";
+static NSString *const LSDefaultBaseURLString = @"https://collector.lightstep.com:443/api/v0/reports";
 static const int LSDefaultFlushIntervalSeconds = 30;
 static const NSUInteger LSDefaultMaxBufferedSpans = 5000;
 static const NSUInteger LSDefaultMaxPayloadJSONLength = 32 * 1024;
