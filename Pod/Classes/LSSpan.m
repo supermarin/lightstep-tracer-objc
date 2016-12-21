@@ -31,23 +31,10 @@
     NSMutableDictionary *inputFields = self.fields;
     // outputFields spec: https://github.com/lightstep/lightstep-tracer-go/blob/40cbd138e6901f0dafdd0cccabb6fc7c5a716efb/lightstep_thrift/ttypes.go#L513
     NSMutableDictionary<NSString*, NSObject*>* outputFields = [NSMutableDictionary<NSString*, NSObject*> dictionary];
-    NSObject* eventVal;
-    if (eventVal = [inputFields objectForKey:@"event"]) {
-        outputFields[@"stable_name"] = [eventVal description];  // just in case it's not an NSString already
-        // Copy on write... (removing the event key from the input dict)
-        inputFields = [NSMutableDictionary dictionaryWithDictionary:inputFields];
-        [inputFields removeObjectForKey:@"event"];
-    }
-    NSObject* payloadVal;
-    if (payloadVal = [inputFields objectForKey:@"payload_json"]) {
-        outputFields[@"payload_json"] = ([payloadVal isKindOfClass:[NSString class]]
-                                         ? payloadVal
-                                         : payloadVal.description);
-    } else if (inputFields.count > 0) {
-        outputFields[@"payload_json"] = [LSUtil objectToJSONString:inputFields
-                                                         maxLength:maxPayloadJSONLength];
-    }
     outputFields[@"timestamp_micros"] = @([self.timestamp toMicros]);
+    if (self.fields.count > 0) {
+        outputFields[@"fields"] = [LSUtil keyValueArrayFromDictionary:self.fields];
+    }
     return outputFields;
 }
 
