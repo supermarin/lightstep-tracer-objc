@@ -11,7 +11,7 @@
 
 NS_ASSUME_NONNULL_BEGIN
 
-@interface LSSpanContext : NSObject<OTSpanContext>
+@interface LSSpanContext : NSObject <OTSpanContext>
 
 #pragma mark - OpenTracing API
 
@@ -21,49 +21,46 @@ NS_ASSUME_NONNULL_BEGIN
  * If the callback returns false, iteration stops and forEachBaggageItem:
  * returns early.
  */
-- (void)forEachBaggageItem:(BOOL (^) (NSString* key, NSString* value))callback;
+- (void)forEachBaggageItem:(BOOL (^)(NSString *key, NSString *value))callback;
 
 #pragma mark - LightStep API
 
-- (instancetype)initWithTraceId:(UInt64)traceId
-                         spanId:(UInt64)spanId
-                        baggage:(nullable NSDictionary*)baggage;
+- (instancetype)initWithTraceId:(UInt64)traceId spanId:(UInt64)spanId baggage:(nullable NSDictionary *)baggage;
 
 /**
  * Return a copy of this SpanContext with the given (potentially additional) baggage item.
  */
-- (LSSpanContext*)withBaggageItem:(NSString*)key value:(NSString*)value;
+- (LSSpanContext *)withBaggageItem:(NSString *)key value:(NSString *)value;
 
 /**
  * Return a specific baggage item.
  */
-- (NSString*)getBaggageItem:(NSString*)key;
+- (NSString *)getBaggageItem:(NSString *)key;
 
 /**
  * The LightStep Span's probabilistically unique trace id.
  */
-@property (nonatomic) UInt64 traceId;
+@property(nonatomic) UInt64 traceId;
 
 /**
  * The LightStep Span's probabilistically unique (span) id.
  */
-@property (nonatomic) UInt64 spanId;
+@property(nonatomic) UInt64 spanId;
 
 /**
  * The trace id as a hexadecimal string.
  */
-- (NSString*)hexTraceId;
+- (NSString *)hexTraceId;
 
 /**
  * The span id as a hexadecimal string.
  */
-- (NSString*)hexSpanId;
+- (NSString *)hexSpanId;
 
 /**
  * The baggage dictionary (for internal use only).
  */
 @property (nonatomic, readonly) NSDictionary* baggage;
-
 
 @end
 

@@ -11,15 +11,13 @@
 @property(nonatomic, readonly) NSDate *timestamp;
 @property(nonatomic, readonly) NSDictionary<NSString *, NSObject *> *fields;
 
-- (instancetype)initWithTimestamp:(NSDate *)timestamp
-                           fields:(NSDictionary<NSString *, NSObject *> *)fields;
+- (instancetype)initWithTimestamp:(NSDate *)timestamp fields:(NSDictionary<NSString *, NSObject *> *)fields;
 
 @end
 
 @implementation LSLog
 
-- (instancetype)initWithTimestamp:(NSDate*)timestamp
-                           fields:(NSDictionary<NSString*, NSObject*>*)fields {
+- (instancetype)initWithTimestamp:(NSDate *)timestamp fields:(NSDictionary<NSString *, NSObject *> *)fields {
     if (self = [super init]) {
         _timestamp = timestamp;
         _fields = [NSDictionary dictionaryWithDictionary:fields];
@@ -27,10 +25,8 @@
     return self;
 }
 
-- (NSDictionary*)toJSONWithMaxPayloadLength:(int)maxPayloadJSONLength {
-    NSMutableDictionary *inputFields = self.fields;
-    // outputFields spec: https://github.com/lightstep/lightstep-tracer-go/blob/40cbd138e6901f0dafdd0cccabb6fc7c5a716efb/lightstep_thrift/ttypes.go#L513
-    NSMutableDictionary<NSString*, NSObject*>* outputFields = [NSMutableDictionary<NSString*, NSObject*> dictionary];
+- (NSDictionary *)toJSON:(NSUInteger)maxPayloadJSONLength {
+    NSMutableDictionary<NSString *, NSObject *> *outputFields = @{}.mutableCopy;
     outputFields[@"timestamp_micros"] = @([self.timestamp toMicros]);
     if (self.fields.count > 0) {
         outputFields[@"fields"] = [LSUtil keyValueArrayFromDictionary:self.fields];
@@ -83,18 +79,15 @@
     [(NSMutableDictionary *)self.tags setObject:value forKey:key];
 }
 
-- (void)logEvent:(NSString*)eventName {
+- (void)logEvent:(NSString *)eventName {
     [self log:eventName timestamp:[NSDate date] payload:nil];
 }
 
-- (void)logEvent:(NSString*)eventName payload:(NSObject*)payload {
+- (void)logEvent:(NSString *)eventName payload:(NSObject *)payload {
     [self log:eventName timestamp:[NSDate date] payload:payload];
 }
 
-- (void)log:(NSString*)eventName
-  timestamp:(NSDate*)timestamp
-    payload:(NSObject*)payload {
-
+- (void)log:(NSString *)eventName timestamp:(NSDate *)timestamp payload:(NSObject *)payload {
     // No locking is required as all the member variables used below are immutable
     // after initialization.
 
@@ -102,7 +95,7 @@
         return;
     }
 
-    NSMutableDictionary<NSString*, NSObject*>* fields = [NSMutableDictionary<NSString*, NSObject*> dictionary];
+    NSMutableDictionary<NSString *, NSObject *> *fields = [NSMutableDictionary<NSString *, NSObject *> dictionary];
     if (eventName != nil) {
         fields[@"event"] = eventName;
     }
@@ -114,11 +107,11 @@
     [self _appendLog:[[LSLog alloc] initWithTimestamp:timestamp fields:fields]];
 }
 
-- (void)log:(NSDictionary<NSString*, NSObject*>*)fields {
+- (void)log:(NSDictionary<NSString *, NSObject *> *)fields {
     [self log:fields timestamp:[NSDate date]];
 }
 
-- (void)log:(NSDictionary<NSString*, NSObject*>*)fields timestamp:(nullable NSDate*)timestamp {
+- (void)log:(NSDictionary<NSString *, NSObject *> *)fields timestamp:(nullable NSDate *)timestamp {
     // No locking is required as all the member variables used below are immutable
     // after initialization.
     if (!self.tracer.enabled) {
@@ -143,7 +136,7 @@
         finishTime = [NSDate date];
     }
 
-    NSDictionary* spanJSON;
+    NSDictionary *spanJSON;
     @synchronized(self) {
         spanJSON = [self _toJSONWithFinishTime:finishTime];
     }
@@ -154,20 +147,20 @@
     return (LSSpanContext *)_context;
 }
 
-- (id<OTSpan>)setBaggageItem:(NSString*)key value:(NSString*)value {
+- (id<OTSpan>)setBaggageItem:(NSString *)key value:(NSString *)value {
     @synchronized(self) {
         _context = [(LSSpanContext *)self.context withBaggageItem:key value:value];
     }
     return self;
 }
 
-- (NSString*)getBaggageItem:(NSString*)key {
+- (NSString *)getBaggageItem:(NSString *)key {
     @synchronized(self) {
         return [(LSSpanContext *)self.context getBaggageItem:key];
     }
 }
 
-- (void)_addTags:(NSDictionary*)tags {
+- (void)_addTags:(NSDictionary *)tags {
     if (tags == nil) {
         return;
     }
@@ -182,7 +175,7 @@
     }
 }
 
-- (NSURL*)_generateTraceURL {
+- (NSURL *)_generateTraceURL {
     int64_t now = [[NSDate date] toMicros];
     NSString* fmt = @"https://app.lightstep.com/%@/trace?span_guid=%@&at_micros=%@";
     NSString* accessToken = [[self.tracer accessToken]
@@ -194,7 +187,8 @@
 }
 
 /**
- * Generate a JSON-ready NSDictionary representation. Return value must not be modified.
+ * Generate a JSON-ready NSDictionary representation. Return value must not be
+ * modified.
  */
 - (NSDictionary*)_toJSONWithFinishTime:(NSDate*)finishTime {
     NSMutableArray<NSDictionary*>* logs = [NSMutableArray arrayWithCapacity:self.logs.count];
