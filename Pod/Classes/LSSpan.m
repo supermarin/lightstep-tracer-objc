@@ -39,12 +39,12 @@
 
 @interface LSSpan ()
 @property(nonatomic, strong) LSSpanContext *parent;
+@property(atomic, strong) LSSpanContext *context;
 @property(nonatomic, strong) NSMutableArray<LSLog *> *logs;
 @property(atomic, strong, readonly) NSMutableDictionary<NSString *, NSString *> *mutableTags;
 @end
 
 @implementation LSSpan
-@synthesize context = _context;
 
 - (instancetype)initWithTracer:(LSTracer *)client {
     return [self initWithTracer:client operationName:@"" parent:nil tags:nil startTime:nil];
@@ -77,7 +77,7 @@
 }
 
 - (void)setTag:(NSString *)key value:(NSString *)value {
-    [(NSMutableDictionary *)self.mutableTags setObject:value forKey:key];
+    [self.mutableTags setObject:value forKey:key];
 }
 
 - (void)logEvent:(NSString *)eventName {
@@ -140,9 +140,8 @@
     [self.tracer _appendSpanJSON:spanJSON];
 }
 
-- (id<OTSpan>)setBaggageItem:(NSString *)key value:(NSString *)value {
-    _context = [self.context withBaggageItem:key value:value];
-    return self;
+- (void)setBaggageItem:(NSString *)key value:(NSString *)value {
+    self.context = [self.context withBaggageItem:key value:value];
 }
 
 - (NSString *)getBaggageItem:(NSString *)key {
