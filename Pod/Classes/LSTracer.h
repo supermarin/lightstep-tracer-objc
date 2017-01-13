@@ -25,7 +25,7 @@ extern NSInteger const LSBackgroundTaskError;
  *
  * @see OTGlobal
  */
-@interface LSTracer : NSObject <OTTracer>
+@interface LSTracer : NSObject<OTTracer>
 
 #pragma mark - LSTracer initialization
 

@@ -10,7 +10,7 @@ NS_ASSUME_NONNULL_BEGIN
 /// traces.
 ///
 /// The LSSpan class is thread-safe.
-@interface LSSpan : NSObject <OTSpan>
+@interface LSSpan : NSObject<OTSpan>
 
 #pragma mark - OpenTracing API
 
@@ -61,7 +61,7 @@ NS_ASSUME_NONNULL_BEGIN
 - (NSURL *)traceURL;
 
 // For testing only
-- (NSDictionary*)_toJSONWithFinishTime:(NSDate*)finishTime;
+- (NSDictionary *)_toJSONWithFinishTime:(NSDate *)finishTime;
 
 @property(nonatomic, strong, readonly) NSDate *startTime;
 
