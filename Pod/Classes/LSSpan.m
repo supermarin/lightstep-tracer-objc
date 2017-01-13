@@ -24,7 +24,7 @@
     return self;
 }
 
-- (NSDictionary *)toJSON:(NSUInteger)maxPayloadJSONLength {
+- (NSDictionary*)toJSONWithMaxPayloadLength:(NSUInteger)maxPayloadJSONLength {
     NSMutableDictionary<NSString *, NSObject *> *outputFields = @{}.mutableCopy;
     outputFields[@"timestamp_micros"] = @([self.timestamp toMicros]);
     if (self.fields.count > 0) {
@@ -40,7 +40,7 @@
 @interface LSSpan()
 @property(nonatomic, strong) LSSpanContext *parent;
 @property(nonatomic, strong) NSMutableArray<LSLog *> *logs;
-@property(atomic, strong, readonly) NSMutableDictionary<NSString *, NSString *> *tags;
+@property(atomic, strong, readonly) NSMutableDictionary<NSString *, NSString *> *mutableTags;
 @end
 
 @implementation LSSpan
@@ -72,8 +72,12 @@
     return self;
 }
 
+- (NSDictionary<NSString *,NSString *> *)tags {
+    return [self.mutableTags copy];
+}
+
 - (void)setTag:(NSString *)key value:(NSString *)value {
-    [(NSMutableDictionary *)self.tags setObject:value forKey:key];
+    [(NSMutableDictionary *)self.mutableTags setObject:value forKey:key];
 }
 
 - (void)logEvent:(NSString *)eventName {
@@ -137,7 +141,7 @@
 }
 
 - (id<OTSpan>)setBaggageItem:(NSString *)key value:(NSString *)value {
-    self.context = [self.context withBaggageItem:key value:value];
+    _context = [self.context withBaggageItem:key value:value];
     return self;
 }
 
@@ -175,7 +179,7 @@
         [logs addObject:[l toJSONWithMaxPayloadLength:self.tracer.maxPayloadJSONLength]];
     }
 
-    NSMutableArray* attributes = [LSUtil keyValueArrayFromDictionary:self.tags];
+    NSMutableArray* attributes = [LSUtil keyValueArrayFromDictionary:self.mutableTags];
     if (self.parent != nil) {
         [attributes addObject:@{@"Key": @"parent_span_guid", @"Value": self.parent.hexSpanId}];
     }

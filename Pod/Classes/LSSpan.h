@@ -14,7 +14,7 @@ NS_ASSUME_NONNULL_BEGIN
 
 #pragma mark - OpenTracing API
 
-@property(nonatomic, strong, readonly) id<OTSpanContext> context;
+@property(atomic, strong, readonly) LSSpanContext *context;
 @property(nonatomic, strong, readonly) LSTracer *tracer;
 @property(atomic, strong) NSString *operationName;
 
