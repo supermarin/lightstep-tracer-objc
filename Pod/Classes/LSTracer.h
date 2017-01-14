@@ -49,7 +49,8 @@ extern NSInteger const LSBackgroundTaskError;
 - (instancetype)initWithToken:(NSString *)accessToken
                 componentName:(nullable NSString *)componentName
                       baseURL:(nullable NSURL *)baseURL
-         flushIntervalSeconds:(NSUInteger)flushIntervalSeconds;
+         flushIntervalSeconds:(NSUInteger)flushIntervalSeconds
+         NS_DESIGNATED_INITIALIZER;
 
 #pragma mark - OpenTracing API
 
